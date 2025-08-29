@@ -1,17 +1,13 @@
 {
   "expo": {
-    "name": "rn-tpvi-facial-rec",
-    "slug": "rn-tpvi-facial-rec",
+    "name": "LoginFacial",
+    "slug": "login-facial",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -20,10 +16,19 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Permite que $(PRODUCT_NAME) acceda a tu cámara para reconocimiento facial.",
+          "microphonePermission": "Permite que $(PRODUCT_NAME) acceda al micrófono.",
+          "recordAudioAndroid": false
+        }
+      ]
+    ]
   }
 }
