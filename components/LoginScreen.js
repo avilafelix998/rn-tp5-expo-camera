@@ -1,14 +1,15 @@
+
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-export default function LoginScreen({ onStartFacialLogin }) {
+export default function LoginScreen({ onStartFacialLogin, onNavigateToRegister }) {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>Bienvenido</Text>
           <Text style={styles.subtitle}>
-            Accede a tu cuenta de forma segura usando reconocimiento facial
+            Accede a tu cuenta de forma segura.
           </Text>
         </View>
 
@@ -23,12 +24,17 @@ export default function LoginScreen({ onStartFacialLogin }) {
           onPress={onStartFacialLogin}
           activeOpacity={0.8}
         >
-          <Text style={styles.buttonText}> Iniciar Reconocimiento Facial</Text>
+          <Text style={styles.buttonText}>Ingresar con Rostro</Text>
         </TouchableOpacity>
 
-        <Text style={styles.helpText}>
-          Toca el botón para acceder con tu rostro de forma segura
-        </Text>
+        <TouchableOpacity 
+          style={styles.registerButton} 
+          onPress={onNavigateToRegister}
+        >
+          <Text style={styles.registerButtonText}>
+            ¿No tienes cuenta? Registra tu rostro
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -76,7 +82,6 @@ const styles = StyleSheet.create({
   },
   faceEmoji: {
     fontSize: 50,
-    color: '#2196F3',
   },
   button: {
     backgroundColor: '#2196F3',
@@ -84,14 +89,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     borderRadius: 30,
     elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    marginBottom: 20,
+    width: '100%',
   },
   buttonText: {
     color: 'white',
@@ -99,11 +97,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  helpText: {
-    fontSize: 14,
-    color: '#999',
-    textAlign: 'center',
-    marginTop: 20,
-    paddingHorizontal: 40,
+  registerButton: {
+    marginTop: 25,
+    padding: 10,
+  },
+  registerButtonText: {
+    color: '#2196F3',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });

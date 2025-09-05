@@ -1,39 +1,73 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet  } from 'react-native';
 import LoginScreen from './components/LoginScreen';
 import FacialRecognition from './components/FacialRecognition';
+import RegisterScreen from './components/RegisterScreen';
 
 export default function App() {
   const [showCamera, setShowCamera] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+  const [registerCuil, setRegisterCuil] = useState(null);
 
   const handleStartFacialLogin = () => {
+    setShowCamera(true);
+    setRegisterCuil(null); 
+  };
+
+  const handleStartFacialRegister = (cuil) => {
+    setRegisterCuil(cuil);
+    setShowRegister(false);
     setShowCamera(true);
   };
 
   const handleAuthSuccess = () => {
     setIsAuthenticated(true);
     setShowCamera(false);
+    setShowRegister(false);
+    setRegisterCuil(null);
   };
 
   const handleCancel = () => {
     setShowCamera(false);
+    setShowRegister(false);
+    setRegisterCuil(null);
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     setShowCamera(false);
+    setShowRegister(false);
+    setRegisterCuil(null);
+  };
+
+  const handleNavigateToRegister = () => {
+    setShowRegister(true);
+    setShowCamera(false);
+    setRegisterCuil(null);
   };
 
   return (
     <View style={styles.container}>
-      {!showCamera && !isAuthenticated && (
-        <LoginScreen onStartFacialLogin={handleStartFacialLogin} />
+      {!showCamera && !isAuthenticated && !showRegister && (
+        <LoginScreen 
+          onStartFacialLogin={handleStartFacialLogin} 
+          onNavigateToRegister={handleNavigateToRegister}
+        />
       )}
       
       {showCamera && !isAuthenticated && (
         <FacialRecognition 
+          mode={registerCuil ? 'register' : 'login'}
+          cuil={registerCuil}
           onAuthSuccess={handleAuthSuccess}
+          onCancel={handleCancel}
+        />
+      )}
+
+      {showRegister && !isAuthenticated && (
+        <RegisterScreen
+          onStartFacialRegister={handleStartFacialRegister}
           onCancel={handleCancel}
         />
       )}
@@ -57,39 +91,38 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
+    justifyContent: 'center',
   },
   successContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#4CAF50',
   },
   successTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#2196F3',
     marginBottom: 10,
-    textAlign: 'center',
   },
   successSubtitle: {
     fontSize: 16,
-    color: 'white',
+    color: '#666',
     marginBottom: 30,
     textAlign: 'center',
   },
   logoutButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: '#2196F3',
     paddingHorizontal: 30,
-    paddingVertical: 15,
+    paddingVertical: 12,
     borderRadius: 25,
-    borderWidth: 1,
-    borderColor: 'white',
+    elevation: 2,
   },
   logoutButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
