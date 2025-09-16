@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
 import LoginScreen from './components/LoginScreen';
 import FacialRecognition from './components/FacialRecognition';
+import ProductManagementScreen from './components/ProductManagementScreen'; 
 
 export default function App() {
   const [showCamera, setShowCamera] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const [products, setProducts] = useState([
+    { id: '1', name: 'Producto de Ejemplo 1', code: '9780201379624' },
+    { id: '2', name: 'Producto de Ejemplo 2', code: '9780321125217' },
+  ]);
 
   const handleStartFacialLogin = () => {
     setShowCamera(true);
@@ -25,31 +31,58 @@ export default function App() {
     setShowCamera(false);
   };
 
-  return (
-    <View style={styles.container}>
-      {!showCamera && !isAuthenticated && (
-        <LoginScreen onStartFacialLogin={handleStartFacialLogin} />
-      )}
-      
-      {showCamera && !isAuthenticated && (
+  const handleAddProduct = (scannedCode) => {
+    if (products.some(p => p.code === scannedCode)) {
+      Alert.alert('Error', 'Este producto ya existe en la lista.');
+      return;
+    }
+    const newProduct = {
+      id: Date.now().toString(), // ID único basado en el timestamp
+      name: `Nuevo Producto ${products.length + 1}`,
+      code: scannedCode,
+    };
+    setProducts(prevProducts => [...prevProducts, newProduct]);
+    Alert.alert('Éxito', `Producto con código ${scannedCode} agregado.`);
+  };
+
+  const handleUpdateProduct = (productId, newName) => {
+    setProducts(prevProducts =>
+      prevProducts.map(p => (p.id === productId ? { ...p, name: newName } : p))
+    );
+    Alert.alert('Éxito', 'El nombre del producto ha sido actualizado.');
+  };
+
+  const handleDeleteProduct = (productId) => {
+    setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
+    Alert.alert('Éxito', 'El producto ha sido eliminado.');
+  };
+
+  const renderContent = () => {
+    if (isAuthenticated) {
+      return (
+        <ProductManagementScreen
+          products={products}
+          onAddProduct={handleAddProduct}
+          onUpdateProduct={handleUpdateProduct}
+          onDeleteProduct={handleDeleteProduct}
+          onLogout={handleLogout}
+        />
+      );
+    }
+    if (showCamera) {
+      return (
         <FacialRecognition 
           onAuthSuccess={handleAuthSuccess}
           onCancel={handleCancel}
         />
-      )}
-      
-      {isAuthenticated && (
-        <View style={styles.successContainer}>
-          <Text style={styles.successTitle}>¡Bienvenido!</Text>
-          <Text style={styles.successSubtitle}>Login exitoso con reconocimiento facial</Text>
-          <TouchableOpacity 
-            style={styles.logoutButton} 
-            onPress={handleLogout}
-          >
-            <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      );
+    }
+    return <LoginScreen onStartFacialLogin={handleStartFacialLogin} />;
+  };
+
+  return (
+    <View style={styles.container}>
+      {renderContent()}
     </View>
   );
 }
@@ -58,38 +91,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-  },
-  successContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#4CAF50',
-  },
-  successTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  successSubtitle: {
-    fontSize: 16,
-    color: 'white',
-    marginBottom: 30,
-    textAlign: 'center',
-  },
-  logoutButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: 'white',
-  },
-  logoutButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
